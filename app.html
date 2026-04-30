@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنصاف - منصة العقود الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #0a5a2f; --primary-light: #2d8a3e; --accent: #c9a227; --bg-light: #f8f9fa; --text-dark: #1a202c; --text-light: #6b7280; --white: #ffffff; --success: #28a745; --error: #dc3545; --border: #dee2e6; --info: #17a2b8; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg-light); color: var(--text-dark); min-height:100vh; display:flex; flex-direction:column; }
+
+        /* Header */
+        .header { background: var(--primary); padding: 0.9rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 1rem; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; }
+        .logo-text { color: var(--white); font-size: 1.55rem; font-weight: 800; line-height: 1.1; }
+        .logo-slogan { color: rgba(255,255,255,0.85); font-size: 0.82rem; display: block; font-weight: 400; }
+        .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .header-info { color: rgba(255,255,255,0.9); font-size: 0.82rem; display: flex; gap: 1rem; align-items: center; }
+        .header-btn { color: #fff; text-decoration: none; font-size: 0.9rem; padding: 7px 14px; border-radius: 6px; border: 1.5px solid rgba(255,255,255,0.5); font-weight: 500; }
+        .header-btn:hover { background: rgba(255,255,255,0.1); }
+        .header-btn.primary { background: var(--accent); border-color: var(--accent); }
+        .user-badge { color: rgba(255,255,255,0.92); font-size: 0.85rem; }
+
+        .main-container { display: flex; min-height: calc(100vh - 70px); flex: 1; }
+        .sidebar { width: 270px; background: var(--white); padding: 1.5rem 1rem; border-left: 1px solid #e2e8f0; }
+        .sidebar h3 { color: var(--text-light); font-size: 0.85rem; margin-bottom: 1rem; padding: 0 0.5rem; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-bottom: 0.5rem; border: none; background: none; width: 100%; text-align: right; font-family: 'Tajawal', sans-serif; font-size: 0.95rem; color: var(--text-dark); }
+        .nav-item:hover { background: var(--bg-light); }
+        .nav-item.active { background: var(--primary); color: var(--white); }
+        .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .content { flex: 1; padding: 2rem; max-width: 1000px; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .section-header { margin-bottom: 1.5rem; }
+        .section-header h1 { font-size: 1.7rem; color: var(--primary); margin-bottom: 0.3rem; }
+        .section-header p { color: var(--text-light); }
+
+        .required-star { color: var(--error); font-weight: 700; margin-right: 3px; }
+        .form-section { background: var(--white); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .form-section-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 2px solid var(--bg-light); cursor: pointer; }
+        .form-section-title { display: flex; align-items: center; gap: 10px; }
+        .form-section-title h3 { color: var(--primary); font-size: 1.1rem; }
+        .form-section-title span { color: var(--text-light); font-size: 0.9rem; }
+        .section-number { background: var(--primary); color: var(--white); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; }
+        .form-section-content { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .form-section-content.collapsed { display: none; }
+        .form-group { margin-bottom: 0.5rem; }
+        .form-group.full-width { grid-column: span 2; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-weight: 500; font-size: 0.9rem; }
+        .form-group label .en { color: var(--text-light); font-size: 0.8rem; font-weight: 400; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; font-family: 'Tajawal', sans-serif; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(10,90,47,0.1); }
+        .form-group input.invalid { border-color: var(--error); background: #fff5f5; }
+        .field-error { color: var(--error); font-size: 0.82rem; margin-top: 4px; display: none; }
+        .field-error.show { display: block; }
+
+        .checkbox-box { grid-column: span 2; background: #fff9e6; border: 1.5px solid var(--accent); border-radius: 10px; padding: 1rem 1.2rem; display: flex; align-items: flex-start; gap: 12px; margin-top: 0.5rem; }
+        .checkbox-box input[type=checkbox] { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+        .checkbox-box label { font-weight: 600; color: var(--text-dark); cursor: pointer; line-height: 1.6; }
+        .checkbox-box label .en { display: block; color: var(--text-light); font-weight: 400; font-size: 0.85rem; margin-top: 2px; }
+        .checkbox-box .view-link { color: var(--primary); font-weight: 600; text-decoration: underline; cursor: pointer; background: none; border: none; padding: 0; font-size: 0.88rem; font-family: inherit; }
+
+        /* Modal for obligations preview */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 2000; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: #fff; border-radius: 14px; max-width: 760px; width: 100%; max-height: 85vh; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-header { background: var(--primary); color: #fff; padding: 1rem 1.3rem; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 1.1rem; }
+        .modal-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 1.3rem; overflow-y: auto; }
+        .modal-body h4 { color: var(--primary); margin: 0.8rem 0 0.5rem; }
+        .modal-body ul { padding-right: 1.3rem; line-height: 1.9; }
+        .modal-body li { margin-bottom: 0.5rem; color: var(--text-dark); font-size: 0.92rem; }
+
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; font-family: 'Tajawal', sans-serif; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+        .btn-primary { background: var(--primary); color: var(--white); }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-accent { background: var(--accent); color: var(--white); }
+        .btn-info { background: var(--info); color: var(--white); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .buttons-row { display: flex; gap: 1rem; margin-top: 1.5rem; }
+
+        .contract-type-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .contract-type-card { background: var(--white); border: 2px solid var(--border); border-radius: 16px; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; position: relative; }
+        .contract-type-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .contract-type-card.selected { border-color: var(--primary); background: #f0faf3; }
+        .contract-type-card.selected::after { content: '\2713'; position: absolute; top: 12px; left: 12px; background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .contract-type-card .card-icon { margin-bottom: 1rem; color: var(--primary); display: flex; justify-content: center; }
+        .contract-type-card h3 { color: var(--primary); font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .contract-type-card p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; }
+        .card-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-top: 0.8rem; }
+        .card-badge.available { background: #e8f5e9; color: var(--primary); }
+
+        .steps-indicator { display: flex; align-items: center; gap: 0; margin-bottom: 2rem; background: var(--white); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        .step { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; color: var(--text-light); }
+        .step.active { color: var(--primary); font-weight: 600; background: #e8f5e9; }
+        .step.completed { color: var(--success); }
+        .step-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; background: var(--bg-light); color: var(--text-light); }
+        .step.active .step-num { background: var(--primary); color: white; }
+        .step.completed .step-num { background: var(--success); color: white; }
+        .step-divider { width: 30px; height: 2px; background: var(--border); margin: 0 4px; }
+
+        .result-container { background: var(--white); border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem; display: none; }
+        .result-container.show { display: block; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid var(--bg-light); flex-wrap: wrap; gap: 1rem; }
+        .result-header h3 { color: var(--primary); }
+        .result-buttons { display: flex; gap: 0.5rem; }
+        .action-btn { background: var(--bg-light); border: 1px solid #e2e8f0; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 0.9rem; }
+        .action-btn:hover { background: #e2e8f0; }
+        .action-btn.pdf-btn { background: #dc3545; color: white; border-color: #dc3545; }
+
+        .contract-display { background: white; padding: 20px; border: 1px solid var(--border); border-radius: 8px; max-height: 600px; overflow-y: auto; }
+        .contract-title { text-align: center; margin-bottom: 20px; }
+        .contract-title h2 { color: var(--primary); font-size: 1.5rem; margin-bottom: 5px; }
+        .contract-title h3 { color: var(--text-dark); font-size: 1.3rem; font-weight: 500; }
+        .contract-info-box { background: var(--bg-light); padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        .contract-section { margin-bottom: 20px; }
+        .contract-section-header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; }
+        .contract-table { width: 100%; border-collapse: collapse; }
+        .contract-table th, .contract-table td { border: 1px solid var(--border); padding: 10px 12px; }
+        .contract-table th { background: var(--bg-light); font-weight: 600; }
+        .contract-table .col-en { text-align: left; width: 35%; }
+        .contract-table .col-val { text-align: center; width: 30%; background: #fafafa; }
+        .contract-table .col-ar { text-align: right; width: 35%; }
+        .contract-table .highlight { background: #e8f5e9 !important; font-weight: 600; }
+        .contract-table .note-row td { font-size: 0.85rem; color: #856404; font-style: italic; text-align: center; background: #fff3cd; }
+        .contract-clause { background: var(--bg-light); padding: 15px; border: 1px solid var(--border); border-top: none; }
+        .contract-clause .clause-ar { text-align: right; margin-bottom: 10px; line-height: 1.8; }
+        .contract-clause .clause-en { text-align: left; color: var(--text-light); line-height: 1.6; }
+        .contract-footer { background: #e8f5e9; padding: 10px 15px; border: 1px solid var(--border); border-top: none; display: flex; justify-content: space-between; font-style: italic; }
+        .disclaimer-box { background: #fff3cd; border: 2px solid #ffc107; padding: 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.9rem; color: #856404; text-align: center; }
+
+        .upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: var(--white); }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: #f0faf3; }
+        .upload-zone h3 { color: var(--primary); margin-bottom: 0.5rem; }
+        .upload-zone p { color: var(--text-light); font-size: 0.9rem; }
+        .file-info { margin-top: 1rem; padding: 0.8rem; background: #e8f5e9; border-radius: 8px; display: none; }
+        .file-info.show { display: block; }
+        .file-info span { color: var(--primary); font-weight: 600; }
+        .or-divider { text-align: center; color: var(--text-light); margin: 1.5rem 0; position: relative; }
+        .or-divider::before, .or-divider::after { content: ''; position: absolute; top: 50%; width: 40%; height: 1px; background: var(--border); }
+        .or-divider::before { right: 0; }
+        .or-divider::after { left: 0; }
+
+        .review-content { background: var(--bg-light); padding: 1.5rem; border-radius: 10px; line-height: 2; white-space: pre-wrap; font-size: 0.95rem; max-height: 700px; overflow-y: auto; }
+        .review-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: var(--white); padding: 1rem; border-radius: 10px; text-align: center; border: 1px solid var(--border); }
+        .stat-card .stat-value { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .stat-card .stat-label { font-size: 0.8rem; color: var(--text-light); }
+
+        .loading { display: none; align-items: center; gap: 12px; padding: 1rem; color: var(--primary); }
+        .loading.show { display: flex; }
+        .spinner { width: 24px; height: 24px; border: 3px solid var(--bg-light); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast { position: fixed; bottom: 20px; left: 20px; background: var(--primary); color: white; padding: 1rem 1.5rem; border-radius: 10px; display: none; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .toast.show { display: block; }
+        .toast.error { background: var(--error); }
+
+        .salary-summary { background: #e8f5e9; padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+        .salary-row { display: flex; justify-content: space-between; padding: 0.3rem 0; border-bottom: 1px dashed #ccc; }
+        .salary-row:last-child { border-bottom: none; font-weight: 700; color: var(--primary); }
+
+        .language-toggle { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .lang-btn { padding: 8px 16px; border: 2px solid var(--primary); background: white; color: var(--primary); border-radius: 6px; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+        .lang-btn.active { background: var(--primary); color: white; }
+
+        /* Footer */
+        .footer { background: var(--primary); color: #fff; padding: 1.5rem 2rem; text-align: center; }
+        .footer a { color: rgba(255,255,255,0.9); text-decoration: none; margin: 0 0.6rem; font-size: 0.9rem; }
+        .footer a:hover { text-decoration: underline; color: #fff; }
+        .footer .small { opacity: 0.8; margin-top: 0.4rem; font-size: 0.85rem; }
+
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .sidebar { width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 1rem; }
+            .sidebar h3 { display: none; }
+            .form-section-content { grid-template-columns: 1fr; }
+            .contract-type-grid { grid-template-columns: 1fr; }
+            .review-stats { grid-template-columns: 1fr; }
+            .header-info { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="{{ url_for('static', filename='ensaf-logo.jpeg') }}" alt="إنصاف">
+            <div>
+                <div class="logo-text">إنصاف</div>
+                <span class="logo-slogan">عقود عمل ذكية وفق نظام العمل السعودي</span>
+            </div>
+        </a>
+        <div class="header-right">
+            <div class="header-info">
+                <span>♡ Made In PSU ♡</span>
+                <span>Info@ensaf.com</span>
+            </div>
+            {% if current_user %}
+                <span class="user-badge">{{ current_name or current_user }}</span>
+                <a href="{{ url_for('logout') }}" class="header-btn">تسجيل الخروج</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="header-btn primary">Login</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3>القائمة الرئيسية</h3>
+            <button class="nav-item active" data-section="templates">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                قوالب العقود
+            </button>
+            <button class="nav-item" data-section="create">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                إنشاء عقد العمل
+            </button>
+            <button class="nav-item" data-section="review">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                مراجعة العقد
+            </button>
+            <button class="nav-item" data-section="explain">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg>
+                شرح البنود القانونية
+            </button>
+        </aside>
+
+        <main class="content">
+            <!-- Contract Templates -->
+            <section id="templates" class="content-section active">
+                <div class="section-header">
+                    <h1>قوالب عقود العمل</h1>
+                    <p>اختر نوع عقد العمل المناسب وفق نظام العمل السعودي واللائحة التنفيذية</p>
+                </div>
+                <div class="contract-type-grid">
+                    <div class="contract-type-card selected" onclick="selectContractType(this, 'fixed')">
+                        <div class="card-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <h3>عقد عمل محدد المدة</h3>
+                        <p>Fixed-Term Employment Contract</p>
+                        <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--text-light);">عقد عمل بمدة محددة يتم تجديده أو ينتهي بانتهاء مدته. يُحدد فيه تاريخ البداية والنهاية بشكل واضح وفق المادة (55) من نظام العمل.</p>
+                        <span class="card-badge available">متوفر</span>
+                    </div>
+                    <div class="contract-type-card" onclick="selectContractType(this, 'open')">
+                        <div class="card-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        </div>
+                        <h3>عقد عمل غير محدد المدة</h3>
+                        <p>Open-Ended Employment Contract</p>
+                        <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--text-light);">عقد عمل مفتوح المدة للعمال السعوديين، يستمر حتى يرغب أحد الطرفين في إنهائه وفق الإجراءات النظامية المنصوص عليها في المادة (74) و(75).</p>
+                        <span class="card-badge available">متوفر</span>
+                    </div>
+                </div>
+                <div style="background:var(--white);padding:1.5rem;border-radius:12px;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                    <h3 style="color:var(--primary);margin-bottom:0.8rem;">معلومات مهمة عن أنواع العقود</h3>
+                    <p style="color:var(--text-light);line-height:1.8;font-size:0.9rem;">• <strong>العقد محدد المدة:</strong> ينتهي بانتهاء مدته. إذا تجدد ثلاث مرات متتالية أو بلغت مدة العقد الأصلي مع التجديد أربع سنوات، يتحول تلقائياً إلى عقد غير محدد المدة (المادة 55).</p>
+                    <p style="color:var(--text-light);line-height:1.8;font-size:0.9rem;">• <strong>العقد غير محدد المدة:</strong> يحق لأي من الطرفين إنهاؤه بسبب مشروع مع إشعار كتابي قبل الإنهاء بمدة لا تقل عن 60 يوماً (المادة 75).</p>
+                    <p style="color:var(--text-light);line-height:1.8;font-size:0.9rem;">• <strong>فترة التجربة:</strong> لا تزيد عن 90 يوماً قابلة للتمديد إلى 180 يوماً بموافقة كتابية (المادة 53).</p>
+                </div>
+                <div class="buttons-row">
+                    <button class="btn btn-primary" onclick="goToGenerate()">متابعة إنشاء العقد ←</button>
+                </div>
+            </section>
+
+            <!-- Generate Contract -->
+            <section id="create" class="content-section">
+                <div class="section-header">
+                    <h1>إنشاء عقد العمل</h1>
+                    <p>عقد العمل الموحد - وفق نظام العمل السعودي</p>
+                </div>
+                <div class="steps-indicator">
+                    <div class="step completed"><span class="step-num">✓</span> اختيار النوع</div>
+                    <div class="step-divider"></div>
+                    <div class="step active"><span class="step-num">2</span> تعبئة البيانات</div>
+                    <div class="step-divider"></div>
+                    <div class="step"><span class="step-num">3</span> إنشاء العقد</div>
+                </div>
+                <form id="contractForm">
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">1</span><div><h3>بيانات العقد</h3><span>Contract Information</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label>رقم العقد <span class="en">Contract No.</span></label><input type="text" id="contract_number" placeholder="مثال: 5555"></div>
+                            <div class="form-group"><label>نوع العقد <span class="en">Contract Type</span></label><select id="contract_type"><option value="محدد المدة / Fixed-term">محدد المدة / Fixed-term</option><option value="غير محدد المدة / Open-ended">غير محدد المدة / Open-ended</option></select></div>
+                            <div class="form-group"><label>تاريخ إبرام العقد <span class="en">Contract Date</span></label><input type="date" id="contract_date"></div>
+                            <div class="form-group"><label>تاريخ مباشرة العمل <span class="en">Start Date</span></label><input type="date" id="start_date"></div>
+                            <div class="form-group"><label>تاريخ نهاية العقد <span class="en">End Date</span></label><input type="date" id="end_date"></div>
+                            <div class="form-group"><label>مكان إبرام العقد <span class="en">Location</span></label><input type="text" id="contract_location" placeholder="مثال: الرياض"></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">2</span><div><h3>بيانات الطرف الأول (صاحب العمل)</h3><span>First Party - Employer</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label><span class="required-star">*</span> اسم المنشأة <span class="en">Establishment Name</span></label><input type="text" id="employer_name" placeholder="مثال: شركة بوبا العربية" required></div>
+                            <div class="form-group"><label>نوع المنشأة <span class="en">Type</span></label><input type="text" id="employer_type" placeholder="مثال: شركة"></div>
+                            <div class="form-group"><label>رقم تسجيل HRSD</label><input type="text" id="employer_hrsd_id"></div>
+                            <div class="form-group"><label>الرقم الوطني الموحد</label><input type="text" id="employer_unified_no"></div>
+                            <div class="form-group full-width"><label>العنوان الوطني <span class="en">National Address</span></label><input type="text" id="employer_address"></div>
+                            <div class="form-group"><label>رقم الهاتف <span class="en">Phone</span></label><input type="text" id="employer_phone"></div>
+                            <div class="form-group"><label>البريد الإلكتروني <span class="en">Email</span></label><input type="email" id="employer_email"></div>
+                            <div class="form-group"><label>ممثل المنشأة <span class="en">Representative</span></label><input type="text" id="employer_rep_name"></div>
+                            <div class="form-group"><label>رقم هوية الممثل</label><input type="text" id="employer_rep_id"></div>
+                            <div class="form-group"><label>صفته <span class="en">Capacity</span></label><input type="text" id="employer_rep_capacity"></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">3</span><div><h3>بيانات الطرف الثاني (العامل)</h3><span>Second Party - Employee</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label><span class="required-star">*</span> اسم العامل <span class="en">Employee Name</span></label><input type="text" id="employee_name" required></div>
+                            <div class="form-group"><label><span class="required-star">*</span> الجنسية <span class="en">Nationality</span></label><input type="text" id="employee_nationality" required></div>
+                            <div class="form-group"><label>نوع الهوية <span class="en">ID Type</span></label><select id="employee_id_type" onchange="onIdTypeChange()"><option value="هوية وطنية / National ID">هوية وطنية / National ID</option><option value="إقامة / Resident ID">إقامة / Resident ID</option></select></div>
+                            <div class="form-group">
+                                <label><span class="required-star">*</span> رقم الهوية <span class="en">ID Number (10 digits)</span></label>
+                                <input type="text" id="employee_id_number" required maxlength="10" inputmode="numeric" pattern="\d{10}" oninput="validateIdNumber()">
+                                <div class="field-error" id="id_number_error">يجب أن يكون رقم الهوية 10 أرقام / ID must be exactly 10 digits</div>
+                            </div>
+                            <div class="form-group"><label>رقم الجواز <span class="en">Passport</span></label><input type="text" id="employee_passport"></div>
+                            <div class="form-group"><label>الجنس <span class="en">Gender</span></label><select id="employee_gender"><option value="ذكر / Male">ذكر / Male</option><option value="أنثى / Female">أنثى / Female</option></select></div>
+                            <div class="form-group"><label>الحالة الاجتماعية</label><select id="employee_marital_status"><option value="أعزب / Single">أعزب / Single</option><option value="متزوج / Married">متزوج / Married</option></select></div>
+                            <div class="form-group"><label>تاريخ الميلاد <span class="en">Birth Date</span></label><input type="date" id="employee_birth_date"></div>
+                            <div class="form-group full-width"><label>العنوان الوطني <span class="en">Address</span></label><input type="text" id="employee_address"></div>
+                            <div class="form-group"><label>رقم الجوال <span class="en">Mobile</span></label><input type="text" id="employee_phone"></div>
+                            <div class="form-group"><label>البريد الإلكتروني <span class="en">Email</span></label><input type="email" id="employee_email"></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">4</span><div><h3>المهنة ومعلومات العمل</h3><span>Job Information</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label><span class="required-star">*</span> المسمى الوظيفي <span class="en">Job Title</span></label><input type="text" id="job_title" required></div>
+                            <div class="form-group"><label><span class="required-star">*</span> مقر العمل (المدينة) <span class="en">Work Location</span></label><input type="text" id="work_location" required></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">5-8</span><div><h3>تفاصيل العقد</h3><span>Contract Details</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label>مدة العقد (بالأشهر) <span class="en">Duration</span></label><input type="number" id="duration_months" value="12"></div>
+                            <div class="form-group"><label>التجديد التلقائي <span class="en">Auto Renewal</span></label><select id="auto_renewal"><option value="نعم / Yes">نعم / Yes</option><option value="لا / No">لا / No</option></select></div>
+                            <div class="form-group"><label>فترة التجربة (بالأيام) <span class="en">Probation</span></label><input type="number" id="probation_days" value="90"></div>
+                            <div class="form-group"><label>أيام العمل/أسبوع <span class="en">Working Days</span></label><input type="number" id="working_days" value="5"></div>
+                            <div class="form-group"><label>ساعات العمل/أسبوع <span class="en">Working Hours</span></label><input type="number" id="working_hours" value="48"></div>
+                            <div class="form-group"><label>أيام الراحة/أسبوع <span class="en">Rest Days</span></label><input type="number" id="rest_days" value="2"></div>
+                            <div class="form-group"><label>أيام الإجازة السنوية <span class="en">Annual Leave</span></label><input type="number" id="vacation_days" value="21"></div>
+
+                            <!-- Obligations & Benefits Acceptance -->
+                            <div class="checkbox-box">
+                                <input type="checkbox" id="accept_obligations" required>
+                                <label for="accept_obligations">
+                                    <span class="required-star">*</span> أوافق على الالتزامات والمزايا الواردة في العقد
+                                    <span class="en">I agree to the Obligations & Benefits stated in the contract</span>
+                                    <button type="button" class="view-link" onclick="openObligationsModal()">عرض تفاصيل الالتزامات والمزايا ←</button>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">9</span><div><h3>الأجر والمزايا</h3><span>Wage & Benefits</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label><span class="required-star">*</span> الأجر الأساسي (ريال) <span class="en">Basic Wage</span></label><input type="number" id="basic_salary" oninput="calculateSalary()" required></div>
+                            <div class="form-group"><label>بدل السكن (ريال) <span class="en">Housing</span></label><input type="number" id="housing_allowance" value="0" oninput="calculateSalary()"></div>
+                            <div class="form-group"><label>بدل النقل (ريال) <span class="en">Transport</span></label><input type="number" id="transport_allowance" value="0" oninput="calculateSalary()"></div>
+                            <div class="form-group"><label>بدلات أخرى (ريال) <span class="en">Other</span></label><input type="number" id="other_allowances" value="0" oninput="calculateSalary()"></div>
+                            <div class="form-group"><label>نسبة التأمينات % <span class="en">GOSI %</span></label><input type="number" id="gosi_deduction" value="9.75" step="0.01" oninput="calculateSalary()"></div>
+                        </div>
+                        <div class="salary-summary">
+                            <div class="salary-row"><span>إجمالي الأجر / Total Wage</span><span id="totalSalary">0.00 ريال</span></div>
+                            <div class="salary-row"><span>استقطاع التأمينات / GOSI</span><span id="gosiAmount">-0.00 ريال</span></div>
+                            <div class="salary-row"><span>صافي الأجر / Net Wage</span><span id="netSalary">0.00 ريال</span></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-header" onclick="toggleSection(this)"><div class="form-section-title"><span class="section-number">10</span><div><h3>معلومات الحساب البنكي</h3><span>Bank Information</span></div></div><span>▼</span></div>
+                        <div class="form-section-content">
+                            <div class="form-group"><label>اسم البنك <span class="en">Bank Name</span></label><input type="text" id="bank_name"></div>
+                            <div class="form-group"><label>رقم الآيبان <span class="en">IBAN</span></label><input type="text" id="iban"></div>
+                        </div>
+                    </div>
+                    <div class="buttons-row">
+                        <button type="button" class="btn" style="background:var(--bg-light);color:var(--text-dark);border:1px solid var(--border);" onclick="switchSection('templates')">→ رجوع</button>
+                        <button type="submit" class="btn btn-primary" id="generateBtn">إنشاء العقد</button>
+                    </div>
+                </form>
+                <div class="loading" id="generateLoading"><div class="spinner"></div><span>جاري إنشاء العقد...</span></div>
+                <div class="result-container" id="contractResult">
+                    <div class="result-header"><h3>تم إنشاء العقد</h3><div class="result-buttons"><button class="action-btn" onclick="copyContract()">نسخ</button><button class="action-btn pdf-btn" onclick="exportPDF()">PDF</button></div></div>
+                    <div class="contract-display" id="contractDisplay"></div>
+                    <div class="disclaimer-box">تنويه: هذا نموذج استرشادي وليس استشارة قانونية.</div>
+                </div>
+            </section>
+
+            <!-- Review Contract -->
+            <section id="review" class="content-section">
+                <div class="section-header">
+                    <h1>مراجعة العقد ومقارنته</h1>
+                    <p>ارفع عقدك أو الصق نصه لمقارنته مع النموذج الموحد لعقد العمل السعودي واكتشاف الاختلافات</p>
+                </div>
+                <div class="form-section">
+                    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('contractFile').click()">
+                        <input type="file" id="contractFile" accept=".pdf,.txt" style="display:none" onchange="handleFileUpload(this)">
+                        <h3>ارفع ملف العقد</h3>
+                        <p>اسحب الملف هنا أو انقر للاختيار (PDF أو TXT)</p>
+                        <div class="file-info" id="fileInfo"><span id="fileName"></span></div>
+                    </div>
+                    <div class="or-divider">أو</div>
+                    <div class="form-group">
+                        <label style="font-size:1rem;font-weight:600;">الصق نص العقد هنا <span class="en">Paste Contract Text</span></label>
+                        <textarea id="review_contract_text" placeholder="الصق هنا نص العقد الذي تريد مراجعته ومقارنته بالنموذج الموحد..." style="min-height:200px;margin-top:0.5rem;"></textarea>
+                    </div>
+                    <div style="margin-top:1rem;">
+                        <label style="font-weight:600;margin-bottom:0.5rem;display:block;">لغة التقرير</label>
+                        <div class="language-toggle" id="reviewLangToggle">
+                            <button type="button" class="lang-btn active" data-lang="arabic">العربية</button>
+                            <button type="button" class="lang-btn" data-lang="english">English</button>
+                        </div>
+                        <input type="hidden" id="review_language" value="arabic">
+                    </div>
+                    <div class="buttons-row">
+                        <button class="btn btn-info" id="reviewBtn" onclick="reviewContract()">مراجعة ومقارنة العقد</button>
+                    </div>
+                </div>
+                <div class="loading" id="reviewLoading"><div class="spinner"></div><span>جاري تحليل العقد ومقارنته بالنموذج الموحد...</span></div>
+                <div class="result-container" id="reviewResult">
+                    <div class="result-header"><h3>نتائج المراجعة والمقارنة</h3><div class="result-buttons"><button class="action-btn" onclick="copyReview()">نسخ التقرير</button></div></div>
+                    <div class="review-stats" id="reviewStats">
+                        <div class="stat-card"><div class="stat-value" id="statChars">-</div><div class="stat-label">عدد الأحرف</div></div>
+                        <div class="stat-card"><div class="stat-value" id="statTime">-</div><div class="stat-label">وقت التحليل</div></div>
+                        <div class="stat-card"><div class="stat-value">16</div><div class="stat-label">بنود المقارنة</div></div>
+                    </div>
+                    <div class="review-content" id="reviewContent"></div>
+                    <div class="disclaimer-box">هذه المراجعة للأغراض التعليمية فقط وليست استشارة قانونية. يرجى استشارة محامٍ مرخص.</div>
+                </div>
+            </section>
+
+            <!-- Explain Clauses -->
+            <section id="explain" class="content-section">
+                <div class="section-header"><h1>شرح البنود القانونية</h1><p>احصل على شرح مبسط لأي بند من بنود العقد</p></div>
+                <div class="form-section">
+                    <h3 style="margin-bottom:1rem;">أدخل البند المراد شرحه</h3>
+                    <div class="language-toggle" id="explainLangToggle">
+                        <button type="button" class="lang-btn active" data-lang="arabic">العربية</button>
+                        <button type="button" class="lang-btn" data-lang="english">English</button>
+                    </div>
+                    <form id="explainForm">
+                        <div class="form-group"><label>نص البند</label><textarea id="clause_text" required placeholder="الصق هنا نص البند الذي تريد شرحه..." style="min-height:150px;"></textarea></div>
+                        <input type="hidden" id="explanation_language" value="arabic">
+                        <button type="submit" class="btn btn-accent" id="explainBtn">اشرح هذا البند</button>
+                    </form>
+                </div>
+                <div class="loading" id="explainLoading"><div class="spinner"></div><span>جاري التحليل...</span></div>
+                <div class="result-container" id="explanationResult">
+                    <div class="result-header"><h3>الشرح المبسط</h3><button class="action-btn" onclick="copyExplanation()">نسخ</button></div>
+                    <div style="background:var(--bg-light);padding:1.5rem;border-radius:10px;line-height:1.9;" id="explanationContent"></div>
+                    <div class="disclaimer-box">هذا الشرح للأغراض التعليمية فقط وليس استشارة قانونية.</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Obligations & Benefits Modal -->
+    <div class="modal-overlay" id="obligationsModal" onclick="if(event.target===this)closeObligationsModal()">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>الالتزامات والمزايا / Obligations & Benefits</h3>
+                <button class="modal-close" onclick="closeObligationsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4>التزامات الطرف الأول (صاحب العمل)</h4>
+                <ul>
+                    <li>دفع أجر الطرف الثاني وتوثيق الدفع عبر منصة الأجور المعتمدة لدى وزارة الموارد البشرية.</li>
+                    <li>دفع العمولات وتسليم المزايا العينية في تاريخ الاستحقاق.</li>
+                    <li>دفع أجر ساعات العمل الإضافية يوازي الأجر + 50% من الأجر الأساسي.</li>
+                    <li>توفير العناية الصحية الوقائية والعلاجية وفق الضمان الصحي التعاوني.</li>
+                    <li>تسجيل الطرف الثاني لدى المؤسسة العامة للتأمينات الاجتماعية (GOSI).</li>
+                    <li>دفع رسوم الاستقدام والإقامة ورخصة العمل وتجديدها.</li>
+                    <li>منح الإجازات السنوية والعطل الرسمية والإجازات المرضية.</li>
+                    <li>تصفية الحقوق خلال أسبوع من انتهاء العقد ودفع مكافأة نهاية الخدمة.</li>
+                </ul>
+                <h4>التزامات الطرف الثاني (العامل)</h4>
+                <ul>
+                    <li>إنجاز العمل المكلف به وفق أصول المهنة وتعليمات الطرف الأول.</li>
+                    <li>العناية بأدوات العمل والمهام والخامات المملوكة للطرف الأول.</li>
+                    <li>الالتزام بحسن السلوك والأخلاق والأنظمة المعمول بها في المملكة.</li>
+                    <li>تقديم العون والمساعدة في حالات الطوارئ والكوارث دون مقابل إضافي.</li>
+                    <li>الخضوع للفحوصات الطبية عند الطلب للتحقق من السلامة المهنية.</li>
+                </ul>
+                <p style="margin-top:1rem;padding:0.8rem;background:#fff3cd;border-radius:8px;font-size:0.88rem;color:#856404;">
+                    بالموافقة، فإن الطرفين يقرّان بعلمهما وقبولهما لجميع الالتزامات والمزايا المنصوص عليها في العقد الموحد وفق نظام العمل السعودي.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer class="footer">
+        <div>
+            <a href="{{ url_for('about') }}">About Us</a> ·
+            <a href="{{ url_for('privacy') }}">Privacy</a>
+        </div>
+        <div class="small">© 2026 إنصاف — Made In PSU ♡</div>
+    </footer>
+
+    <script>
+        let generatedContract = null, currentFormData = {}, selectedContractType = 'fixed', uploadedFile = null;
+
+        function showToast(msg, type='success') { const t = document.getElementById('toast'); t.textContent = msg; t.className = 'toast show ' + type; setTimeout(() => t.classList.remove('show'), 3000); }
+        function toggleSection(h) { const c = h.nextElementSibling; c.classList.toggle('collapsed'); h.querySelector('span:last-child').textContent = c.classList.contains('collapsed') ? '◀' : '▼'; }
+        function calculateSalary() { const b=parseFloat(document.getElementById('basic_salary').value)||0; const h=parseFloat(document.getElementById('housing_allowance').value)||0; const t=parseFloat(document.getElementById('transport_allowance').value)||0; const o=parseFloat(document.getElementById('other_allowances').value)||0; const g=parseFloat(document.getElementById('gosi_deduction').value)||9.75; const total=b+h+t+o; const gosi=total*(g/100); const net=total-gosi; document.getElementById('totalSalary').textContent=total.toFixed(2)+' ريال'; document.getElementById('gosiAmount').textContent='-'+gosi.toFixed(2)+' ريال'; document.getElementById('netSalary').textContent=net.toFixed(2)+' ريال'; }
+
+        function switchSection(id) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            const navBtn = document.querySelector('[data-section="'+id+'"]');
+            if(navBtn) navBtn.classList.add('active');
+            const sec = document.getElementById(id);
+            if(sec) sec.classList.add('active');
+        }
+        document.querySelectorAll('.nav-item').forEach(i => i.addEventListener('click', () => switchSection(i.dataset.section)));
+
+        // Handle hash-based deep linking from home page (#create / #explain / #review / #templates)
+        function openFromHash() {
+            const h = (window.location.hash || '').replace('#','');
+            if (['templates','create','review','explain'].includes(h)) switchSection(h);
+        }
+        window.addEventListener('hashchange', openFromHash);
+
+        // Contract type selection
+        function selectContractType(card, type) { document.querySelectorAll('.contract-type-card').forEach(c=>c.classList.remove('selected')); card.classList.add('selected'); selectedContractType=type; }
+        function goToGenerate() {
+            if(!selectedContractType){showToast('يرجى اختيار نوع العقد أولاً','error');return;}
+            switchSection('create');
+            const typeSelect = document.getElementById('contract_type');
+            if(selectedContractType === 'fixed') typeSelect.value = 'محدد المدة / Fixed-term';
+            else if(selectedContractType === 'open') typeSelect.value = 'غير محدد المدة / Open-ended';
+        }
+
+        // ID Number validation (10 digits required for National ID)
+        function onIdTypeChange() {
+            const type = document.getElementById('employee_id_type').value;
+            const input = document.getElementById('employee_id_number');
+            // National ID must be exactly 10 digits; Resident ID also commonly 10 digits in KSA
+            input.setAttribute('maxlength', '10');
+            input.setAttribute('pattern', '\\d{10}');
+            validateIdNumber();
+        }
+        function validateIdNumber() {
+            const input = document.getElementById('employee_id_number');
+            const err = document.getElementById('id_number_error');
+            // Strip any non-digit
+            input.value = input.value.replace(/\D/g, '').slice(0, 10);
+            const valid = /^\d{10}$/.test(input.value);
+            if (input.value.length > 0 && !valid) {
+                input.classList.add('invalid');
+                err.classList.add('show');
+            } else {
+                input.classList.remove('invalid');
+                err.classList.remove('show');
+            }
+            return valid;
+        }
+
+        // Obligations & Benefits modal
+        function openObligationsModal() { document.getElementById('obligationsModal').classList.add('show'); }
+        function closeObligationsModal() { document.getElementById('obligationsModal').classList.remove('show'); }
+
+        // Language toggles
+        document.querySelectorAll('.language-toggle').forEach(group => {
+            group.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    group.querySelectorAll('.lang-btn').forEach(l => l.classList.remove('active'));
+                    btn.classList.add('active');
+                    const hiddenInput = group.nextElementSibling;
+                    if(hiddenInput && hiddenInput.type === 'hidden') hiddenInput.value = btn.dataset.lang;
+                });
+            });
+        });
+
+        // Collect form data
+        function collectFormData() { const fields=['contract_number','contract_type','contract_date','start_date','end_date','contract_location','employer_name','employer_type','employer_hrsd_id','employer_unified_no','employer_address','employer_phone','employer_email','employer_rep_name','employer_rep_id','employer_rep_capacity','employee_name','employee_nationality','employee_id_type','employee_id_number','employee_passport','employee_gender','employee_marital_status','employee_birth_date','employee_address','employee_phone','employee_email','job_title','work_location','duration_months','auto_renewal','probation_days','working_days','working_hours','rest_days','vacation_days','basic_salary','housing_allowance','transport_allowance','other_allowances','gosi_deduction','bank_name','iban']; const d={}; fields.forEach(f=>{const e=document.getElementById(f);if(e)d[f]=e.value;}); return d; }
+
+        // Render contract
+        function renderContract(data) {
+            let html='<div class="contract-title"><h2>'+data.title_ar+'</h2><h3>'+data.title_en+'</h3></div><div class="contract-info-box"><p><strong>بيانات العقد</strong></p><p>Contract Information</p></div>';
+            data.sections.forEach(s => {
+                html+='<div class="contract-section"><div class="contract-section-header"><span>'+s.num+'    '+s.title_en+'</span><span>'+s.title_ar+'    '+s.num+'</span></div>';
+                if(s.multi_clauses&&s.multi_clauses.length>0){s.multi_clauses.forEach(mc=>{html+='<div class="contract-clause"><div class="clause-ar">'+mc.ar+'</div><div class="clause-en">'+mc.en+'</div></div>';});}
+                else if(s.clause&&s.text_ar){html+='<div class="contract-clause"><div class="clause-ar">'+s.text_ar+'</div><div class="clause-en">'+s.text_en+'</div></div>';}
+                else if(s.rows){html+='<table class="contract-table">';s.rows.forEach(r=>{const hl=r.highlight?'highlight':'';html+='<tr><td class="col-en">'+r.en+'</td><td class="col-val '+hl+'">'+r.val+'</td><td class="col-ar">'+r.ar+'</td></tr>';if(r.note_ar||r.note_en){html+='<tr class="note-row"><td colspan="3">'+(r.note_en||'')+' | '+(r.note_ar||'')+'</td></tr>';}});html+='</table>';if(s.footer_ar){html+='<div class="contract-footer"><span>'+s.footer_en+'</span><span>'+s.footer_ar+'</span></div>';}}
+                html+='</div>';
+            });
+            return html;
+        }
+
+        // Generate contract submit
+        document.getElementById('contractForm').addEventListener('submit', async(e)=>{
+            e.preventDefault();
+
+            // Validate ID number
+            if (!validateIdNumber()) {
+                showToast('رقم الهوية يجب أن يكون 10 أرقام / ID must be 10 digits','error');
+                document.getElementById('employee_id_number').focus();
+                return;
+            }
+            // Validate obligations checkbox
+            if (!document.getElementById('accept_obligations').checked) {
+                showToast('يجب الموافقة على الالتزامات والمزايا قبل إنشاء العقد','error');
+                document.getElementById('accept_obligations').focus();
+                return;
+            }
+
+            const btn=document.getElementById('generateBtn'); const loading=document.getElementById('generateLoading'); const result=document.getElementById('contractResult'); currentFormData=collectFormData(); btn.disabled=true; loading.classList.add('show'); result.classList.remove('show');
+            try{const r=await fetch('/api/generate-contract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({form_data:currentFormData})}); const d=await r.json();
+                if(d.success){generatedContract=d.contract; document.getElementById('contractDisplay').innerHTML=renderContract(d.contract); result.classList.add('show');
+                    const steps=document.querySelectorAll('.steps-indicator .step'); steps[1].classList.remove('active'); steps[1].classList.add('completed'); steps[1].querySelector('.step-num').textContent='✓'; steps[2].classList.add('active');
+                    showToast('تم إنشاء العقد بنجاح!','success'); result.scrollIntoView({behavior:'smooth'});
+                }else{showToast('خطأ: '+d.error,'error');}
+            }catch(err){showToast('خطأ: '+err.message,'error');}finally{btn.disabled=false;loading.classList.remove('show');}
+        });
+
+        // File upload
+        function handleFileUpload(input){const file=input.files[0];if(file){uploadedFile=file;document.getElementById('fileName').textContent=file.name+' ('+(file.size/1024).toFixed(1)+' KB)';document.getElementById('fileInfo').classList.add('show');showToast('تم رفع الملف: '+file.name,'success');}}
+        const uz=document.getElementById('uploadZone');
+        uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover');});
+        uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));
+        uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&(f.name.endsWith('.pdf')||f.name.endsWith('.txt'))){document.getElementById('contractFile').files=e.dataTransfer.files;handleFileUpload(document.getElementById('contractFile'));}else{showToast('يرجى رفع ملف PDF أو TXT فقط','error');}});
+
+        // Review contract
+        async function reviewContract(){
+            const btn=document.getElementById('reviewBtn'); const loading=document.getElementById('reviewLoading'); const result=document.getElementById('reviewResult');
+            const pastedText=document.getElementById('review_contract_text').value.trim(); const language=document.getElementById('review_language').value; const startTime=Date.now();
+            if(!uploadedFile&&!pastedText){showToast('يرجى رفع ملف العقد أو لصق نصه','error');return;}
+            btn.disabled=true; loading.classList.add('show'); result.classList.remove('show');
+            try{let response;
+                if(uploadedFile){const fd=new FormData();fd.append('contract_file',uploadedFile);fd.append('language',language);response=await fetch('/api/review-contract',{method:'POST',body:fd});}
+                else{response=await fetch('/api/review-contract',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contract_text:pastedText,language:language})});}
+                const d=await response.json(); const elapsed=((Date.now()-startTime)/1000).toFixed(1);
+                if(d.success){document.getElementById('statChars').textContent=(d.text_length||pastedText.length).toLocaleString(); document.getElementById('statTime').textContent=elapsed+' ثانية';
+                    let html=d.review.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^### (.*$)/gm,'<h3>$1</h3>').replace(/^## (.*$)/gm,'<h2>$1</h2>').replace(/^# (.*$)/gm,'<h2>$1</h2>').replace(/\n- /g,'\n• ').replace(/\n/g,'<br>');
+                    document.getElementById('reviewContent').innerHTML=html; result.classList.add('show'); showToast('تمت مراجعة العقد بنجاح!','success'); result.scrollIntoView({behavior:'smooth'});
+                }else{showToast('خطأ: '+d.error,'error');}
+            }catch(err){showToast('خطأ: '+err.message,'error');}finally{btn.disabled=false;loading.classList.remove('show');}
+        }
+
+        // Explain clause
+        document.getElementById('explainForm').addEventListener('submit',async(e)=>{
+            e.preventDefault(); const btn=document.getElementById('explainBtn'); const loading=document.getElementById('explainLoading'); const result=document.getElementById('explanationResult');
+            const clause=document.getElementById('clause_text').value; const lang=document.getElementById('explanation_language').value;
+            btn.disabled=true; loading.classList.add('show'); result.classList.remove('show');
+            try{const r=await fetch('/api/explain-clause',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clause_text:clause,language:lang})}); const d=await r.json();
+                if(d.success){document.getElementById('explanationContent').textContent=d.explanation;result.classList.add('show');showToast('تم الشرح بنجاح!','success');}else{showToast('خطأ: '+d.error,'error');}
+            }catch(err){showToast('خطأ: '+err.message,'error');}finally{btn.disabled=false;loading.classList.remove('show');}
+        });
+
+        // Copy functions
+        async function copyContract(){try{await navigator.clipboard.writeText(document.getElementById('contractDisplay').innerText);showToast('تم نسخ العقد!','success');}catch(e){showToast('تم النسخ!','success');}}
+        async function copyExplanation(){try{await navigator.clipboard.writeText(document.getElementById('explanationContent').textContent);showToast('تم النسخ!','success');}catch(e){}}
+        async function copyReview(){try{await navigator.clipboard.writeText(document.getElementById('reviewContent').innerText);showToast('تم نسخ التقرير!','success');}catch(e){}}
+
+        // Export PDF
+        async function exportPDF(){if(!generatedContract){showToast('يرجى إنشاء العقد أولاً!','error');return;}showToast('جاري إعداد ملف PDF...','success');try{const r=await fetch('/api/export-pdf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contract_data:generatedContract,form_data:currentFormData})});if(r.ok){const b=await r.blob();const u=window.URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='عقد_العمل_'+new Date().toISOString().slice(0,10)+'.pdf';document.body.appendChild(a);a.click();window.URL.revokeObjectURL(u);document.body.removeChild(a);showToast('تم تحميل ملف PDF!','success');}else{const d=await r.json();showToast('خطأ: '+d.error,'error');}}catch(err){showToast('خطأ: '+err.message,'error');}}
+
+        // Init
+        calculateSalary();
+        document.getElementById('contract_date').value=new Date().toISOString().split('T')[0];
+        openFromHash();
+    </script>
+</body>
+</html>

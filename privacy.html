@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سياسة الخصوصية - إنصاف</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: #0a5a2f; --primary-light: #2d8a3e; --accent: #c9a227; --bg-light: #f8f9fa; --text-dark: #1a202c; --text-light: #6b7280; --white: #ffffff; --border: #dee2e6; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg-light); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+        .header { background: var(--primary); padding: 0.9rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; }
+        .logo-text { color: var(--white); font-size: 1.6rem; font-weight: 800; }
+        .logo-slogan { color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; font-weight: 400; }
+        .header-right { display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap; }
+        .header-info { color: rgba(255,255,255,0.9); font-size: 0.85rem; display: flex; gap: 1rem; align-items: center; }
+        .nav-btn { background: var(--accent); color: var(--white); padding: 9px 20px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 0.92rem; }
+        .nav-btn.outline { background: transparent; border: 1.5px solid var(--white); }
+        main { flex: 1; padding: 3rem 1.5rem; max-width: 900px; margin: 0 auto; width: 100%; }
+        .hero { text-align: center; margin-bottom: 2.5rem; }
+        .hero h1 { color: var(--primary); font-size: 2.4rem; margin-bottom: 0.5rem; }
+        .hero p { color: var(--text-light); font-size: 1rem; }
+        .section { background: var(--white); padding: 2rem; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); margin-bottom: 1.2rem; }
+        .section h2 { color: var(--primary); margin-bottom: 0.8rem; font-size: 1.3rem; }
+        .section p, .section li { line-height: 1.9; color: var(--text-dark); }
+        .section ul { padding-right: 1.5rem; margin-top: 0.5rem; }
+        .footer { background: var(--primary); color: var(--white); padding: 2rem; text-align: center; }
+        .footer-links a { color: rgba(255,255,255,0.9); text-decoration: none; margin: 0 0.8rem; }
+        .footer-links a:hover { color: #fff; text-decoration: underline; }
+        .footer .small { opacity: 0.75; font-size: 0.85rem; margin-top: 0.6rem; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo">
+            <img src="{{ url_for('static', filename='ensaf-logo.jpeg') }}" alt="إنصاف">
+            <div>
+                <div class="logo-text">إنصاف</div>
+                <span class="logo-slogan">عقود عمل ذكية وفق نظام العمل السعودي</span>
+            </div>
+        </a>
+        <div class="header-right">
+            <div class="header-info">
+                <span>♡ Made In PSU ♡</span>
+                <span>Info@ensaf.com</span>
+            </div>
+            {% if current_user %}
+                <a href="{{ url_for('main_app') }}" class="nav-btn">الذهاب للمنصة</a>
+                <a href="{{ url_for('logout') }}" class="nav-btn outline">تسجيل الخروج</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-btn outline">Login</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1>سياسة الخصوصية</h1>
+            <p>Privacy Policy — آخر تحديث: 2026</p>
+        </div>
+
+        <div class="section">
+            <h2>1. المعلومات التي نجمعها</h2>
+            <p>عند استخدامك لمنصة إنصاف، قد نقوم بجمع بعض المعلومات التي تدخلها طوعياً عند إنشاء حساب، مثل: الاسم، البريد الإلكتروني، وكلمة المرور المشفّرة.</p>
+            <p>كما قد نعالج بيانات العقود التي تدخلها فقط لغرض إنشاء العقد أو مراجعته، ولا نحتفظ بها بعد انتهاء الجلسة.</p>
+        </div>
+
+        <div class="section">
+            <h2>2. كيف نستخدم معلوماتك</h2>
+            <ul>
+                <li>لتقديم الخدمة الأساسية: إنشاء ومراجعة العقود وشرح البنود القانونية.</li>
+                <li>للتحقق من هويتك وتأمين الوصول إلى حسابك.</li>
+                <li>لتحسين المنصة بشكل إحصائي مجهول الهوية.</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>3. حماية البيانات</h2>
+            <p>كلمات المرور تُخزّن بصيغة مشفّرة (hash)، ولا يمكن استرجاعها كنص صريح. لا نشارك بياناتك مع أي طرف ثالث لأغراض تسويقية.</p>
+        </div>
+
+        <div class="section">
+            <h2>4. تنويه قانوني</h2>
+            <p>منصة إنصاف أداة مساعدة تقنية لأغراض تعليمية وتوعوية، ولا تُعدّ استشارة قانونية. يُوصى دائماً بمراجعة محامٍ مرخّص قبل توقيع أي وثيقة قانونية.</p>
+        </div>
+
+        <div class="section">
+            <h2>5. التواصل</h2>
+            <p>لأي استفسار حول الخصوصية: <strong>Info@ensaf.com</strong></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="{{ url_for('about') }}">About Us</a> ·
+            <a href="{{ url_for('privacy') }}">Privacy</a>
+        </div>
+        <div class="small">© 2026 إنصاف — Made In PSU ♡</div>
+    </footer>
+</body>
+</html>
